@@ -14,11 +14,11 @@ export function Button({
   disabled, 
   ...props 
 }: ButtonProps) {
-  const baseStyles = "relative flex w-full justify-center items-center rounded-lg px-4 py-2.5 font-medium transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed";
+  const baseStyles = "relative flex w-full items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold uppercase tracking-[0.25em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-brand-black)] disabled:cursor-not-allowed disabled:opacity-70";
   
   const variants = {
-    primary: "bg-[var(--color-brand-red)] text-white hover:bg-[var(--color-brand-red-hover)] active:scale-[0.98] shadow-md hover:shadow-lg",
-    outline: "border-2 border-[var(--color-brand-dark)] text-[var(--color-brand-dark)] hover:bg-gray-50 active:scale-[0.98]"
+    primary: "gold-gradient text-black shadow-[0_12px_30px_rgba(200,169,106,0.35)] hover:brightness-105 active:scale-[0.98]",
+    outline: "border border-white/20 text-white/80 hover:border-[var(--color-brand-gold)] hover:text-white active:scale-[0.98]"
   };
 
   return (

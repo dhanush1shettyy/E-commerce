@@ -12,7 +12,7 @@ def signup(user_in: UserCreate, session: Session = Depends(get_session)):
     try:
         user = create_new_user(user_in, session)
         access_token = create_access_token(data={"sub": str(user.id)})
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token, "token_type": "bearer", "user_name": user.name}
     except HTTPException as e:
         raise e
     except ValueError as e:
@@ -26,6 +26,6 @@ def signin(user_login: UserLogin, session: Session = Depends(get_session)):
     try:
         user = authenticate_user(user_login, session)
         access_token = create_access_token(data={"sub": str(user.id)})
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token, "token_type": "bearer", "user_name": user.name}
     except HTTPException as e:
         raise e

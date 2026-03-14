@@ -12,6 +12,14 @@ import { FormError } from '@/components/FormError';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const BackgroundDecor = () => (
+  <>
+    <div className="pointer-events-none absolute -left-24 top-10 h-56 w-56 rounded-full bg-[var(--color-brand-gold)]/20 blur-3xl" />
+    <div className="pointer-events-none absolute right-0 top-32 h-px w-2/3 bg-white/10" />
+    <div className="pointer-events-none absolute -bottom-32 right-10 h-72 w-72 rounded-full bg-[var(--color-brand-gold)]/10 blur-3xl" />
+  </>
+);
+
 export default function Signup() {
   const router = useRouter();
   const [globalError, setGlobalError] = useState<string>('');
@@ -31,8 +39,9 @@ export default function Signup() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...submitData } = data;
       const response = await api.post('/auth/signup', submitData);
-      
+
       localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user_name', response.data.user_name || data.name);
       setIsSuccess(true);
       setTimeout(() => {
         router.push('/');
@@ -44,83 +53,87 @@ export default function Signup() {
 
   if (isSuccess) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-4 sm:p-8">
-        <AuthCard title="Welcome to Essence">
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 rounded-full bg-green-100 p-3">
-              <svg className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-4 sm:p-8">
+        <BackgroundDecor />
+        <div className="relative z-10 flex w-full justify-center">
+          <AuthCard title="Welcome to Essence">
+            <div className="flex flex-col items-center justify-center py-12 text-center text-white">
+              <div className="mb-4 rounded-full bg-emerald-500/15 p-3">
+                <svg className="h-8 w-8 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-medium text-white">Account Created!</h3>
+              <p className="mt-2 text-white/60">Redirecting you to the dashboard...</p>
             </div>
-            <h3 className="text-xl font-medium text-gray-900">Account Created!</h3>
-            <p className="mt-2 text-gray-500">Redirecting you to the dashboard...</p>
-          </div>
-        </AuthCard>
+          </AuthCard>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4 sm:p-8">
-      <AuthCard 
-        title="Create Account" 
-        subtitle="Join Essence to discover your signature scent"
-      >
-        <FormError message={globalError} />
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <InputField
-            label="Full Name"
-            placeholder="Jane Doe"
-            {...register('name')}
-            error={errors.name?.message}
-          />
-          
-          <InputField
-            label="Email Address"
-            type="email"
-            placeholder="jane@example.com"
-            {...register('email')}
-            error={errors.email?.message}
-          />
-          
-          <InputField
-            label="Date of Birth"
-            type="date"
-            {...register('date_of_birth')}
-            error={errors.date_of_birth?.message}
-          />
-          
-          <InputField
-            label="Password"
-            type="password"
-            placeholder="••••••••"
-            {...register('password')}
-            error={errors.password?.message}
-          />
-          
-          <InputField
-            label="Confirm Password"
-            type="password"
-            placeholder="••••••••"
-            {...register('confirmPassword')}
-            error={errors.confirmPassword?.message}
-          />
-          
-          <div className="mt-8">
-            <Button type="submit" isLoading={isSubmitting}>
-              Create Account
-            </Button>
-          </div>
-          
-          <p className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/signin" className="font-medium text-[var(--color-brand-red)] hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </form>
-      </AuthCard>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-4 sm:p-8">
+      <BackgroundDecor />
+      <div className="relative z-10 flex w-full justify-center">
+        <AuthCard title="Create Account" subtitle="Join Essence to discover your signature scent">
+          <FormError message={globalError} />
+
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <InputField
+              label="Full Name"
+              placeholder="Jane Doe"
+              {...register('name')}
+              error={errors.name?.message}
+            />
+
+            <InputField
+              label="Email Address"
+              type="email"
+              placeholder="jane@example.com"
+              {...register('email')}
+              error={errors.email?.message}
+            />
+
+            <InputField
+              label="Date of Birth"
+              type="date"
+              className="[color-scheme:dark] accent-[var(--color-brand-gold)]"
+              {...register('date_of_birth')}
+              error={errors.date_of_birth?.message}
+            />
+
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="********"
+              {...register('password')}
+              error={errors.password?.message}
+            />
+
+            <InputField
+              label="Confirm Password"
+              type="password"
+              placeholder="********"
+              {...register('confirmPassword')}
+              error={errors.confirmPassword?.message}
+            />
+
+            <div className="mt-8">
+              <Button type="submit" isLoading={isSubmitting}>
+                Create Account
+              </Button>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-white/60">
+              Already have an account?{' '}
+              <Link href="/signin" className="font-medium text-[var(--color-brand-gold)] hover:text-[var(--color-brand-gold-light)]">
+                Sign in
+              </Link>
+            </p>
+          </form>
+        </AuthCard>
+      </div>
     </main>
   );
 }

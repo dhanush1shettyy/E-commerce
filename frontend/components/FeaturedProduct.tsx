@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Star, ShoppingBag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchFeaturedProduct, type Product } from "@/lib/api";
+import { resolveProductImage } from "@/lib/productImages";
 
 function SkeletonLoader() {
   return (
@@ -90,7 +91,7 @@ export default function FeaturedProduct() {
           className="relative aspect-square bg-gradient-to-br from-[var(--color-brand-dark)] to-black rounded-lg overflow-hidden group"
         >
           <Image
-            src={product.image}
+            src={resolveProductImage({ name: product.name, image: product.image })}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"

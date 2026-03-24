@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star, ShoppingBag, Heart } from "lucide-react";
 import type { Product } from "@/lib/api";
+import { resolveProductImage } from "@/lib/productImages";
 
 interface ProductCardProps {
   product: Product;
@@ -22,7 +23,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-black">
         <Image
-          src={product.image}
+          src={resolveProductImage({ name: product.name, image: product.image })}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"

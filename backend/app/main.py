@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .api.auth_routes import router as auth_router
+from .api.shop_routes import router as shop_router
 from .database.db import init_db
 
 @asynccontextmanager
@@ -21,6 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(shop_router, prefix="/api/shop", tags=["shop"])
 
 @app.get("/health")
 def health_check():

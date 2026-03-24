@@ -1,0 +1,122 @@
+[
+  {
+    "brand": "Dior",
+    "model_name": "Sauvage",
+    "price": 12000,
+    "description": "A bold and fresh fragrance inspired by wide-open spaces, blending bergamot with spicy and woody notes.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Fresh, Spicy, Woody"
+  },
+  {
+    "brand": "Creed",
+    "model_name": "Aventus",
+    "price": 30000,
+    "description": "A sophisticated and iconic fragrance featuring fruity top notes and a rich smoky woody base.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Fruity, Smoky, Woody"
+  },
+  {
+    "brand": "Giorgio Armani",
+    "model_name": "Acqua Di Gio",
+    "price": 8500,
+    "description": "A timeless aquatic fragrance combining marine freshness with citrus and aromatic notes.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Aquatic, Fresh, Citrus"
+  },
+  {
+    "brand": "Tom Ford",
+    "model_name": "Noir Extreme",
+    "price": 13500,
+    "description": "A luxurious and warm fragrance with spicy accords, amber, and sweet gourmand notes.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Warm, Spicy, Sweet"
+  },
+  {
+    "brand": "Gucci",
+    "model_name": "Guilty Pour Homme",
+    "price": 7200,
+    "description": "A modern aromatic fragrance with lavender, lemon, and patchouli creating a confident scent.",
+    "item_form": "Liquid",
+    "item_volume": "90 ml",
+    "target_audience": "Men",
+    "scent": "Aromatic, Fresh, Woody"
+  },
+  {
+    "brand": "Parfums de Marly",
+    "model_name": "Haltane",
+    "price": 27500,
+    "description": "A refined woody fragrance blending oud, saffron, and aromatic notes for a rich experience.",
+    "item_form": "Liquid",
+    "item_volume": "125 ml",
+    "target_audience": "Men",
+    "scent": "Woody, Oud, Spicy"
+  },
+  {
+    "brand": "Ralph Lauren",
+    "model_name": "Polo Blue",
+    "price": 6200,
+    "description": "A refreshing and energetic fragrance combining melon, cucumber, and aquatic accords.",
+    "item_form": "Liquid",
+    "item_volume": "125 ml",
+    "target_audience": "Men",
+    "scent": "Fresh, Aquatic, Fruity"
+  },
+  {
+    "brand": "Rasasi",
+    "model_name": "Hawas For Him",
+    "price": 4000,
+    "description": "A youthful and vibrant fragrance featuring fruity sweetness with aquatic and musky undertones.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Sweet, Aquatic, Musky"
+  },
+  {
+    "brand": "Viktor&Rolf",
+    "model_name": "Spicebomb Extreme",
+    "price": 7000,
+    "description": "An intense and explosive fragrance with spicy, tobacco, and vanilla notes.",
+    "item_form": "Liquid",
+    "item_volume": "90 ml",
+    "target_audience": "Men",
+    "scent": "Spicy, Tobacco, Warm"
+  },
+  {
+    "brand": "Yves Saint Laurent",
+    "model_name": "La Nuit de l'Homme",
+    "price": 7500,
+    "description": "A seductive evening fragrance featuring cardamom, cedar, and lavender.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Spicy, Woody, Aromatic"
+  },
+  {
+    "brand": "Prada",
+    "model_name": "Luna Rossa Carbon",
+    "price": 7000,
+    "description": "A modern masculine scent blending lavender with metallic and mineral notes.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Men",
+    "scent": "Fresh, Metallic, Aromatic"
+  },
+  {
+    "brand": "Bond No. 9",
+    "model_name": "Bleecker Street",
+    "price": 24000,
+    "description": "A unique fragrance combining fruity sweetness with woody and musky undertones.",
+    "item_form": "Liquid",
+    "item_volume": "100 ml",
+    "target_audience": "Unisex",
+    "scent": "Sweet, Woody, Musky"
+  }
+]

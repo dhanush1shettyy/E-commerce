@@ -3,6 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
+const pushMock = jest.fn();
+
 // Mock framer-motion
 jest.mock("framer-motion", () => ({
   motion: {
@@ -11,6 +13,12 @@ jest.mock("framer-motion", () => ({
         props: React.HTMLAttributes<HTMLDivElement>,
         ref: React.Ref<HTMLDivElement>
       ) => <div ref={ref} {...props} />
+    ),
+    form: React.forwardRef(
+      (
+        props: React.FormHTMLAttributes<HTMLFormElement>,
+        ref: React.Ref<HTMLFormElement>
+      ) => <form ref={ref} {...props} />
     ),
     p: React.forwardRef(
       (
@@ -49,10 +57,20 @@ jest.mock("next/link", () => {
   };
 });
 
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: pushMock,
+  }),
+}));
+
 // Import after mocks
 import Navbar from "@/components/Navbar";
 
 describe("Navbar", () => {
+  beforeEach(() => {
+    pushMock.mockReset();
+  });
+
   it("renders the ESSENCE logo", () => {
     render(<Navbar />);
     expect(screen.getByText("ESSENCE")).toBeInTheDocument();
@@ -90,5 +108,27 @@ describe("Navbar", () => {
       "aria-label",
       "Main navigation"
     );
+  });
+
+  it("navigates to filtered shop route when desktop search is submitted", async () => {
+    render(<Navbar />);
+    const desktopSearchButton = screen.getAllByLabelText("Search")[0];
+
+    await userEvent.click(desktopSearchButton);
+    const searchInput = screen.getByLabelText("Search perfumes");
+    await userEvent.type(searchInput, "dior{enter}");
+
+    expect(pushMock).toHaveBeenCalledWith("/shop?search=dior");
+  });
+
+  it("navigates to shop route when search query is empty", async () => {
+    render(<Navbar />);
+    const desktopSearchButton = screen.getAllByLabelText("Search")[0];
+
+    await userEvent.click(desktopSearchButton);
+    const searchInput = screen.getByLabelText("Search perfumes");
+    await userEvent.type(searchInput, "   {enter}");
+
+    expect(pushMock).toHaveBeenCalledWith("/shop");
   });
 });

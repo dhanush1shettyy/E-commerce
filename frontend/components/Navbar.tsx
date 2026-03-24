@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
+import {
+  CART_STORAGE_KEY,
+  CART_UPDATED_EVENT,
+  getCartCount,
+} from "@/lib/cartStorage";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -14,10 +20,14 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authUserName, setAuthUserName] = useState<string | null>(null);
+  const [cartCount, setCartCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -29,8 +39,14 @@ export default function Navbar() {
     setAuthUserName(name);
   };
 
+  const syncCartCount = () => {
+    if (typeof window === "undefined") return;
+    setCartCount(getCartCount());
+  };
+
   useEffect(() => {
     syncAuthState();
+    syncCartCount();
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -45,15 +61,28 @@ export default function Navbar() {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setUserMenuOpen(false);
+        setSearchOpen(false);
       }
     };
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === CART_STORAGE_KEY) {
+        syncCartCount();
+      }
+    };
+
+    const handleCartUpdate = () => syncCartCount();
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
+    window.addEventListener(CART_UPDATED_EVENT, handleCartUpdate);
+    window.addEventListener("storage", handleStorage);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
+      window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdate);
+      window.removeEventListener("storage", handleStorage);
     };
   }, []);
 
@@ -65,6 +94,25 @@ export default function Navbar() {
   const handleAuthLinkClick = () => {
     setUserMenuOpen(false);
     setMobileOpen(false);
+  };
+
+  const submitSearch = (query: string) => {
+    const normalizedQuery = query.trim();
+    setSearchOpen(false);
+    setMobileOpen(false);
+
+    if (!normalizedQuery) {
+      router.push("/shop");
+      return;
+    }
+
+    const params = new URLSearchParams({ search: normalizedQuery });
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submitSearch(searchQuery);
   };
 
   const handleLogout = () => {
@@ -110,21 +158,49 @@ export default function Navbar() {
 
         {/* Desktop Icons */}
         <div className="hidden md:flex items-center gap-5">
+          <AnimatePresence>
+            {searchOpen && (
+              <motion.form
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 240 }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.2 }}
+                onSubmit={handleSearchSubmit}
+                className="overflow-hidden"
+              >
+                <label htmlFor="desktop-search" className="sr-only">
+                  Search perfumes
+                </label>
+                <input
+                  id="desktop-search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search by brand or model"
+                  className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-1.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[var(--color-brand-gold)]"
+                />
+              </motion.form>
+            )}
+          </AnimatePresence>
           <button
             aria-label="Search"
+            onClick={() => setSearchOpen((open) => !open)}
             className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors duration-300"
           >
             <Search size={20} />
           </button>
-          <button
+          <Link
+            href="/cart"
             aria-label="Shopping cart"
             className="relative text-white/70 hover:text-[var(--color-brand-gold)] transition-colors duration-300"
           >
             <ShoppingBag size={20} />
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[var(--color-brand-gold)] rounded-full text-[10px] font-semibold text-black flex items-center justify-center">
-              0
-            </span>
-          </button>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-[var(--color-brand-gold)] rounded-full text-[10px] font-semibold text-black flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           <div className="relative" ref={userMenuRef}>
             <button
               aria-label="User account"
@@ -158,6 +234,22 @@ export default function Navbar() {
                       </p>
                     )}
                   </div>
+                  <Link
+                    href="/cart"
+                    role="menuitem"
+                    onClick={handleAuthLinkClick}
+                    className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                  >
+                    Show cart
+                  </Link>
+                  <Link
+                    href="/orders"
+                    role="menuitem"
+                    onClick={handleAuthLinkClick}
+                    className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                  >
+                    My order
+                  </Link>
                   {isAuthenticated ? (
                     <button
                       type="button"
@@ -220,18 +312,30 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   className="text-sm tracking-wider uppercase text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-2"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => {
+                    setSearchOpen(false);
+                    setMobileOpen(false);
+                  }}
                 >
                   {link.label}
                 </Link>
               ))}
               <div className="flex gap-5 pt-4 border-t border-white/10">
-                <button aria-label="Search" className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors">
+                <button
+                  aria-label="Search"
+                  onClick={() => setSearchOpen((open) => !open)}
+                  className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors"
+                >
                   <Search size={20} />
                 </button>
-                <button aria-label="Shopping cart" className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors">
+                <Link
+                  href="/cart"
+                  aria-label="Shopping cart"
+                  className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
                   <ShoppingBag size={20} />
-                </button>
+                </Link>
                 <div className="relative" ref={mobileUserMenuRef}>
                   <button
                     aria-label="User account"
@@ -265,6 +369,22 @@ export default function Navbar() {
                             </p>
                           )}
                         </div>
+                        <Link
+                          href="/cart"
+                          role="menuitem"
+                          onClick={handleAuthLinkClick}
+                          className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                        >
+                          Show cart
+                        </Link>
+                        <Link
+                          href="/orders"
+                          role="menuitem"
+                          onClick={handleAuthLinkClick}
+                          className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                        >
+                          My order
+                        </Link>
                         {isAuthenticated ? (
                           <button
                             type="button"
@@ -299,6 +419,38 @@ export default function Navbar() {
                   </AnimatePresence>
                 </div>
               </div>
+              <AnimatePresence>
+                {searchOpen && (
+                  <motion.form
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    onSubmit={handleSearchSubmit}
+                    className="mt-4"
+                  >
+                    <label htmlFor="mobile-search" className="sr-only">
+                      Search perfumes
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        id="mobile-search"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        placeholder="Search by brand or model"
+                        className="w-full rounded-md border border-white/20 bg-black/40 px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-[var(--color-brand-gold)]"
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-md border border-[var(--color-brand-gold)] px-3 py-2 text-xs uppercase tracking-wider text-[var(--color-brand-gold)] transition-colors hover:bg-[var(--color-brand-gold)] hover:text-black"
+                      >
+                        Go
+                      </button>
+                    </div>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         )}

@@ -116,11 +116,13 @@ export default function Footer() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
                   required
+                  suppressHydrationWarning
                   aria-label="Email for newsletter"
                   className="flex-1 bg-white/5 border border-white/10 border-r-0 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[var(--color-brand-gold)] transition-colors"
                 />
                 <button
                   type="submit"
+                  suppressHydrationWarning
                   className="gold-gradient text-black text-xs tracking-wider uppercase font-semibold px-6 py-3 hover:opacity-90 transition-opacity"
                 >
                   Subscribe

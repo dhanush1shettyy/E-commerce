@@ -5,6 +5,7 @@ export interface Perfume {
     description: string;
     price: number;
     image_url: string;
+    gender: 'male' | 'female';
 }
 
 export interface PerfumeDetailInfo extends Perfume {

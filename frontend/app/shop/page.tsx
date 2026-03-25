@@ -21,7 +21,7 @@ export default function Shop() {
                     ? `http://localhost:8000/api/shop/perfumes?search=${encodeURIComponent(searchQuery)}`
                     : 'http://localhost:8000/api/shop/perfumes';
                 const response = await fetch(endpoint);
-                const data = await response.json();
+                const data: Perfume[] = await response.json();
                 setPerfumes(data);
             } catch (error) {
                 console.error('Failed to fetch perfumes', error);
@@ -44,7 +44,7 @@ export default function Shop() {
                         <p>
                             {searchQuery
                                 ? `Showing results for "${searchQuery}"`
-                                : "Curated Collection of Premium Men's Perfumes"}
+                                : 'Explore our complete fragrance collection'}
                         </p>
                     </div>
 

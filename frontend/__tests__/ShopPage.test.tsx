@@ -44,17 +44,25 @@ describe("Shop page search behavior", () => {
 
   it("fetches filtered perfumes when search query is present", async () => {
     searchValue = "dior";
-    (global.fetch as jest.Mock).mockResolvedValue({
-      json: async () => [
-        {
-          id: 3,
-          brand_name: "Dior",
-          model_name: "Sauvage",
-          description: "desc",
-          price: 12000,
-          image_url: "/images/perfumes/Dior - Sauvage.png",
-        },
-      ],
+    (global.fetch as jest.Mock).mockImplementation((url: string) => {
+      if (url.includes("/api/shop/perfumes?search=dior")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => [
+            {
+              id: 3,
+              brand_name: "Dior",
+              model_name: "Sauvage",
+              description: "desc",
+              price: 12000,
+              image_url: "/images/perfumes/Dior - Sauvage.png",
+              gender: "male",
+            },
+          ],
+        });
+      }
+
+      return Promise.reject(new Error(`Unexpected URL: ${url}`));
     });
 
     render(<Shop />);
@@ -68,6 +76,8 @@ describe("Shop page search behavior", () => {
     expect(await screen.findByText("Dior")).toBeInTheDocument();
     expect(await screen.findByText("Sauvage")).toBeInTheDocument();
     expect(screen.getByText('Showing results for "dior"')).toBeInTheDocument();
+    expect(screen.queryByText("For Men")).not.toBeInTheDocument();
+    expect(screen.queryByText("For Women")).not.toBeInTheDocument();
   });
 
   it("shows an empty-state message when no perfumes match", async () => {

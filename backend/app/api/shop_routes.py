@@ -9,8 +9,21 @@ from ..database.db import get_session
 router = APIRouter()
 
 @router.get("/perfumes", response_model=List[Perfume])
-def get_perfumes(search: Optional[str] = None, session: Session = Depends(get_session)):
+def get_perfumes(
+    search: Optional[str] = None,
+    gender: Optional[str] = None,
+    session: Session = Depends(get_session),
+):
     perfumes = session.exec(select(Perfume)).all()
+
+    if gender is not None:
+        normalized_gender = gender.strip().lower()
+        if normalized_gender:
+            perfumes = [
+                perfume
+                for perfume in perfumes
+                if perfume.gender.strip().lower() == normalized_gender
+            ]
 
     if search is None:
         return perfumes
@@ -53,6 +66,7 @@ def get_perfume(perfume_id: int, session: Session = Depends(get_session)):
             description=base_perfume.description,
             price=base_perfume.price,
             image_url=base_perfume.image_url,
+            gender=base_perfume.gender,
             item_form="Unknown",
             item_volume="Unknown",
             target_audience="Unknown",
@@ -66,6 +80,7 @@ def get_perfume(perfume_id: int, session: Session = Depends(get_session)):
         description=detail_data.get('description', base_perfume.description),
         price=detail_data.get('price', base_perfume.price),
         image_url=base_perfume.image_url,
+        gender=base_perfume.gender,
         item_form=detail_data.get('item_form', "Unknown"),
         item_volume=detail_data.get('item_volume', "Unknown"),
         target_audience=detail_data.get('target_audience', "Unknown"),

@@ -8,6 +8,7 @@ class PerfumeBase(SQLModel):
     description: str
     price: float
     image_url: str
+    gender: str
 
 
 class Perfume(PerfumeBase, table=True):

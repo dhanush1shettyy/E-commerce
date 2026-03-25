@@ -17,6 +17,7 @@ async def test_get_perfumes_returns_all_when_no_search(client: AsyncClient):
     data = response.json()
     assert isinstance(data, list)
     assert len(data) == 12
+    assert {item["gender"] for item in data}.issubset({"male", "female"})
 
 
 @pytest.fixture(autouse=True)
@@ -61,3 +62,30 @@ async def test_get_perfumes_search_whitespace_returns_all(client: AsyncClient):
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 12
+
+
+async def test_get_perfumes_filter_by_gender_male(client: AsyncClient):
+    response = await client.get("/api/shop/perfumes", params={"gender": "male"})
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) <= 12
+    assert all(item["gender"] == "male" for item in data)
+
+
+async def test_get_perfumes_filter_by_gender_female(client: AsyncClient):
+    response = await client.get("/api/shop/perfumes", params={"gender": "female"})
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) <= 12
+    assert all(item["gender"] == "female" for item in data)
+
+
+async def test_get_perfumes_filter_by_gender_and_search(client: AsyncClient):
+    response = await client.get(
+        "/api/shop/perfumes",
+        params={"gender": "male", "search": "dior"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert all(item["gender"] == "male" for item in data)
+    assert all("dior" in item["brand_name"].lower() or "dior" in item["model_name"].lower() for item in data)

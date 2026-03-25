@@ -1,5 +1,7 @@
 import pytest
 from httpx import AsyncClient
+from sqlmodel import Session
+from app.database.db import seed_perfumes
 
 pytestmark = pytest.mark.anyio
 
@@ -15,6 +17,11 @@ async def test_get_perfumes_returns_all_when_no_search(client: AsyncClient):
     data = response.json()
     assert isinstance(data, list)
     assert len(data) == 12
+
+
+@pytest.fixture(autouse=True)
+def seed_data(session: Session):
+    seed_perfumes(session)
 
 
 async def test_get_perfumes_search_matches_brand_name(client: AsyncClient):

@@ -1,5 +1,7 @@
 import pytest
 from httpx import AsyncClient
+from sqlmodel import Session, select
+from app.models.auth_event_model import AuthEvent
 
 # Async pytest requires pytest-asyncio if we run it, but we can just use anyio
 pytestmark = pytest.mark.anyio
@@ -127,3 +129,47 @@ async def test_signin_nonexistent_user(client: AsyncClient):
     assert response.status_code == 401
     data = response.json()
     assert data["detail"]["code"] == "USER_NOT_FOUND"
+
+
+async def test_signup_creates_auth_event(client: AsyncClient, session: Session):
+    response = await client.post(
+        "/api/auth/signup",
+        json={
+            "name": "Event User",
+            "email": "event-signup@example.com",
+            "password": "Password123!",
+            "date_of_birth": "2000-01-01"
+        }
+    )
+    assert response.status_code == 201
+
+    event = session.exec(
+        select(AuthEvent)
+        .where(AuthEvent.email == "event-signup@example.com")
+        .where(AuthEvent.event_type == "signup")
+    ).first()
+
+    assert event is not None
+    assert event.success is True
+    assert event.failure_code is None
+
+
+async def test_signin_failure_creates_auth_event(client: AsyncClient, session: Session):
+    response = await client.post(
+        "/api/auth/signin",
+        json={
+            "email": "missing@example.com",
+            "password": "Password123!"
+        }
+    )
+    assert response.status_code == 401
+
+    event = session.exec(
+        select(AuthEvent)
+        .where(AuthEvent.email == "missing@example.com")
+        .where(AuthEvent.event_type == "signin")
+    ).first()
+
+    assert event is not None
+    assert event.success is False
+    assert event.failure_code == "USER_NOT_FOUND"

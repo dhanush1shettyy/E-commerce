@@ -8,6 +8,8 @@ from .database.db import init_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from .models.user_model import User
+    from .models.perfume_model import Perfume
+    from .models.auth_event_model import AuthEvent
     init_db()
     yield
 

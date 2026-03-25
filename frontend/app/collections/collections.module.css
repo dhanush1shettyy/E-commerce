@@ -1,0 +1,391 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.pageContainer {
+  min-height: auto;
+  padding: 80px 40px 30px;
+  background: radial-gradient(circle at top, rgba(200, 169, 106, 0.12), transparent 55%),
+    linear-gradient(135deg, #090909 0%, #141414 45%, #0b0b0b 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.pageContainer::before {
+  content: '';
+  position: absolute;
+  top: -45%;
+  left: -30%;
+  width: 160%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(200, 169, 106, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(200, 169, 106, 0.05) 0%, transparent 50%);
+  animation: glowShift 14s ease infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes glowShift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 30px); }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 72px;
+  opacity: 0;
+  animation: fadeInDown 0.9s ease forwards;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(200, 169, 106, 0.75);
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.header h1 {
+  font-size: 3.3rem;
+  color: #f5efe1;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+
+.goldText {
+  background: linear-gradient(135deg, #c8a96a 0%, #f0d79e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: rgba(200, 169, 106, 0.75);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+.divider {
+  width: 90px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c8a96a, transparent);
+  margin: 22px auto;
+}
+
+.collectionCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.collectionCard {
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 169, 106, 0.28);
+  background: rgba(8, 8, 8, 0.7);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.collectionCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(200, 169, 106, 0.5);
+  box-shadow: 0 26px 52px rgba(0, 0, 0, 0.55);
+}
+
+.collectionCardImageWrap {
+  position: relative;
+  height: 300px;
+}
+
+.collectionCardImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.collectionCardInfo {
+  padding: 20px 18px 22px;
+}
+
+.collectionCardInfo h2 {
+  margin: 0;
+  color: #c8a96a;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-size: 1.35rem;
+}
+
+.collectionCardInfo p {
+  margin-top: 10px;
+  color: rgba(245, 239, 225, 0.8);
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif;
+}
+
+.sectionsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.audienceSection {
+  position: relative;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.sectionHeader h2 {
+  font-size: 2rem;
+  color: #c8a96a;
+  letter-spacing: 1.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.sectionHeader p {
+  margin-top: 6px;
+  color: rgba(200, 169, 106, 0.7);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.8px;
+}
+
+.sectionPhotoWrapper {
+  position: relative;
+  width: 180px;
+  height: 115px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 169, 106, 0.35);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.sectionPhoto {
+  object-fit: cover;
+  object-position: center;
+}
+
+.backToCollections {
+  display: inline-flex;
+  margin-top: 12px;
+  color: #c8a96a;
+  border: 1px solid rgba(200, 169, 106, 0.4);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.backToCollections:hover {
+  color: #0b0b0b;
+  background: #c8a96a;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 36px;
+}
+
+.productCard {
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.productCard:hover {
+  transform: translateY(-12px);
+}
+
+.productImageWrapper {
+  position: relative;
+  height: 360px;
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(200, 169, 106, 0.12) 0%, transparent 70%);
+  border-radius: 10px;
+  border: 1px solid rgba(200, 169, 106, 0.12);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.4s ease;
+}
+
+.productCard:hover .productImageWrapper {
+  border-color: rgba(200, 169, 106, 0.3);
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(200, 169, 106, 0.2) 0%, transparent 70%);
+  box-shadow: 0 0 40px rgba(200, 169, 106, 0.15), inset 0 0 60px rgba(200, 169, 106, 0.05);
+}
+
+.bottleImg {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 40px rgba(200, 169, 106, 0.2));
+  transition: all 0.4s ease;
+  z-index: 1;
+  position: relative;
+}
+
+.productCard:hover .bottleImg {
+  transform: scale(1.06) translateY(-4px);
+  filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 60px rgba(200, 169, 106, 0.3));
+}
+
+.productImageWrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 280px;
+  background: radial-gradient(ellipse at center, rgba(200, 169, 106, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.productInfo {
+  text-align: center;
+}
+
+.productBrand {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #c8a96a;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.productTitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  font-family: 'Inter', sans-serif;
+}
+
+.productPrice {
+  margin-top: 8px;
+  color: #c8a96a;
+  letter-spacing: 1px;
+  font-family: 'Inter', sans-serif;
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 3px solid rgba(200, 169, 106, 0.25);
+  border-top-color: #c8a96a;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.emptyState {
+  border: 1px solid rgba(200, 169, 106, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  text-align: center;
+  color: #c8a96a;
+  border-radius: 12px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+  .productsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .header h1 {
+    font-size: 2.6rem;
+  }
+
+  .collectionCardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeader h2 {
+    font-size: 1.6rem;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .pageContainer {
+    padding: 50px 18px 20px;
+  }
+
+  .header {
+    margin-bottom: 48px;
+  }
+
+  .eyebrow {
+    letter-spacing: 0.3em;
+  }
+
+  .header h1 {
+    font-size: 2.1rem;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
+  }
+
+  .sectionPhotoWrapper {
+    width: 120px;
+    height: 80px;
+    border-radius: 10px;
+  }
+
+  .collectionCardImageWrap {
+    height: 240px;
+  }
+
+  .productsGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

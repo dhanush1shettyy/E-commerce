@@ -31,6 +31,20 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const toTitleCase = (value: string) =>
+    value
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
+  const getFirstName = (value: string | null) => {
+    if (!value) return "There";
+    const firstPart = value.trim().split(" ")[0] || "There";
+    return toTitleCase(firstPart);
+  };
+
   const syncAuthState = () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("token");
@@ -210,9 +224,9 @@ export default function Navbar() {
                 syncAuthState();
                 setUserMenuOpen((open) => !open);
               }}
-              className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors duration-300"
+              className="h-9 w-9 rounded-full border border-white/20 bg-black/30 flex items-center justify-center text-white/70 hover:text-[var(--color-brand-gold)] hover:border-[var(--color-brand-gold)]/40 transition-colors duration-300"
             >
-              <User size={20} />
+              <User size={21} />
             </button>
             <AnimatePresence>
               {userMenuOpen && (
@@ -226,11 +240,11 @@ export default function Navbar() {
                 >
                   <span className="absolute -top-1 right-5 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)]" />
                   <div className="px-4 pb-3 pt-2">
-                    <span className="block text-[10px] uppercase tracking-[0.35em] text-white/40">Account</span>
+                    <span className="block font-[var(--font-playfair)] text-xs tracking-[0.25em] text-[var(--color-brand-gold)]/75">Account</span>
                     <div className="mt-2 h-px w-full bg-[var(--color-brand-gold)] opacity-40" />
                     {isAuthenticated && (
-                      <p className="mt-3 text-sm text-white/80">
-                        Hi {authUserName || "there"}
+                      <p className="mt-3 text-base text-[var(--color-brand-gold)] font-[var(--font-playfair)]">
+                        Hi {getFirstName(authUserName)}
                       </p>
                     )}
                   </div>
@@ -238,26 +252,26 @@ export default function Navbar() {
                     href="/cart"
                     role="menuitem"
                     onClick={handleAuthLinkClick}
-                    className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                    className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                   >
-                    Show cart
+                    Show Cart
                   </Link>
                   <Link
                     href="/orders"
                     role="menuitem"
                     onClick={handleAuthLinkClick}
-                    className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                    className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                   >
-                    My order
+                    My Order
                   </Link>
                   {isAuthenticated ? (
                     <button
                       type="button"
                       role="menuitem"
                       onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                      className="block w-full px-4 py-2.5 text-left text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                     >
-                      Log out
+                      Log Out
                     </button>
                   ) : (
                     <>
@@ -265,17 +279,17 @@ export default function Navbar() {
                         href="/signin"
                         role="menuitem"
                         onClick={handleAuthLinkClick}
-                        className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                        className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                       >
-                        Sign in
+                        Sign In
                       </Link>
                       <Link
                         href="/signup"
                         role="menuitem"
                         onClick={handleAuthLinkClick}
-                        className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                        className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                       >
-                        Sign up
+                        Sign Up
                       </Link>
                     </>
                   )}
@@ -345,9 +359,9 @@ export default function Navbar() {
                       syncAuthState();
                       setUserMenuOpen((open) => !open);
                     }}
-                    className="text-white/70 hover:text-[var(--color-brand-gold)] transition-colors"
+                    className="h-9 w-9 rounded-full border border-white/20 bg-black/30 flex items-center justify-center text-white/70 hover:text-[var(--color-brand-gold)] hover:border-[var(--color-brand-gold)]/40 transition-colors"
                   >
-                    <User size={20} />
+                    <User size={21} />
                   </button>
                   <AnimatePresence>
                     {userMenuOpen && (
@@ -361,11 +375,11 @@ export default function Navbar() {
                       >
                         <span className="absolute -top-1 right-4 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)]" />
                         <div className="px-4 pb-3 pt-2">
-                          <span className="block text-[10px] uppercase tracking-[0.35em] text-white/40">Account</span>
+                          <span className="block font-[var(--font-playfair)] text-xs tracking-[0.25em] text-[var(--color-brand-gold)]/75">Account</span>
                           <div className="mt-2 h-px w-full bg-[var(--color-brand-gold)] opacity-40" />
                           {isAuthenticated && (
-                            <p className="mt-3 text-sm text-white/80">
-                              Hi {authUserName || "there"}
+                            <p className="mt-3 text-base text-[var(--color-brand-gold)] font-[var(--font-playfair)]">
+                              Hi {getFirstName(authUserName)}
                             </p>
                           )}
                         </div>
@@ -373,26 +387,26 @@ export default function Navbar() {
                           href="/cart"
                           role="menuitem"
                           onClick={handleAuthLinkClick}
-                          className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                          className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                         >
-                          Show cart
+                          Show Cart
                         </Link>
                         <Link
                           href="/orders"
                           role="menuitem"
                           onClick={handleAuthLinkClick}
-                          className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                          className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                         >
-                          My order
+                          My Order
                         </Link>
                         {isAuthenticated ? (
                           <button
                             type="button"
                             role="menuitem"
                             onClick={handleLogout}
-                            className="block w-full px-4 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                            className="block w-full px-4 py-2.5 text-left text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                           >
-                            Log out
+                            Log Out
                           </button>
                         ) : (
                           <>
@@ -400,17 +414,17 @@ export default function Navbar() {
                               href="/signin"
                               role="menuitem"
                               onClick={handleAuthLinkClick}
-                              className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                              className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                             >
-                              Sign in
+                              Sign In
                             </Link>
                             <Link
                               href="/signup"
                               role="menuitem"
                               onClick={handleAuthLinkClick}
-                              className="block px-4 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-[var(--color-brand-gold)]"
+                              className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                             >
-                              Sign up
+                              Sign Up
                             </Link>
                           </>
                         )}

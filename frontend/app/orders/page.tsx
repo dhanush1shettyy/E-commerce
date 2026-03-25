@@ -15,10 +15,17 @@ import {
   updateOrderQuantity,
 } from "@/lib/cartStorage";
 
-const formatPrice = (price: number | string) =>
-  typeof price === "number" ? `$${price.toFixed(2)}` : price;
+const formatINR = (value: number) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
 
-const formatTotal = (value: number) => `$${value.toFixed(2)}`;
+const formatPrice = (price: number | string) => formatINR(normalizePrice(price));
+
+const formatTotal = (value: number) => formatINR(value);
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderEntry[]>([]);

@@ -4,12 +4,27 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
   getCartCount,
 } from "@/lib/cartStorage";
+
+const perfumeBrands = [
+  "Dior",
+  "Creed",
+  "Giorgio Armani",
+  "Tom Ford",
+  "Gucci",
+  "Parfums de Marly",
+  "Ralph Lauren",
+  "Rasasi",
+  "Viktor&Rolf",
+  "Yves Saint Laurent",
+  "Prada",
+  "Bond No. 9"
+];
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -28,6 +43,7 @@ export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authUserName, setAuthUserName] = useState<string | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -158,16 +174,50 @@ export default function Navbar() {
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="relative text-sm tracking-wider uppercase text-white/70 hover:text-white transition-colors duration-300 group"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[var(--color-brand-gold)] transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            if (link.label === "Shop") {
+              return (
+                <div key={link.label} className="relative group/shop py-2">
+                  <Link
+                    href={link.href}
+                    className="relative text-sm tracking-wider uppercase text-white/70 hover:text-white transition-colors duration-300 group flex items-center gap-1"
+                  >
+                    {link.label}
+                    <ChevronDown size={14} className="opacity-70 transition-transform group-hover/shop:-rotate-180" />
+                    <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[var(--color-brand-gold)] transition-all duration-300 group-hover:w-full" />
+                  </Link>
+
+                  <div className="absolute left-0 top-full pt-4 opacity-0 invisible group-hover/shop:opacity-100 group-hover/shop:visible transition-all duration-300 z-50">
+                    <div className="w-64 rounded-xl border border-white/10 bg-[var(--color-brand-dark)] py-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
+                      <span className="absolute -top-1 left-6 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)] z-[-1]" />
+                      
+                      <div className="flex flex-col max-h-[50vh] overflow-y-auto">
+                        {perfumeBrands.map((brand) => (
+                          <Link
+                            key={brand}
+                            href={`/shop?search=${encodeURIComponent(brand)}`}
+                            className="block px-5 py-2.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5"
+                          >
+                            {brand}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="relative text-sm tracking-wider uppercase text-white/70 hover:text-white transition-colors duration-300 group"
+              >
+                {link.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[var(--color-brand-gold)] transition-all duration-300 group-hover:w-full" />
+              </Link>
+            );
+          })}
         </div>
 
         {/* Desktop Icons */}
@@ -321,19 +371,70 @@ export default function Navbar() {
             className="md:hidden bg-[var(--color-brand-dark)] border-t border-white/5"
           >
             <div className="flex flex-col py-6 px-6 gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm tracking-wider uppercase text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-2"
-                  onClick={() => {
-                    setSearchOpen(false);
-                    setMobileOpen(false);
-                  }}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                if (link.label === "Shop") {
+                  return (
+                    <div key={link.label} className="flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <Link
+                          href={link.href}
+                          className="text-sm tracking-wider uppercase text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-2"
+                          onClick={() => {
+                            setSearchOpen(false);
+                            setMobileOpen(false);
+                          }}
+                        >
+                          {link.label}
+                        </Link>
+                        <button 
+                          onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+                          className="text-white/50 hover:text-[var(--color-brand-gold)] p-2 active:scale-95 transition-transform"
+                        >
+                          <ChevronDown size={18} className={`transition-transform duration-300 ${shopDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
+                      
+                      <AnimatePresence>
+                        {shopDropdownOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden pl-4 border-l border-white/10 ml-2 mt-1 flex flex-col gap-2"
+                          >
+                            {perfumeBrands.map((brand) => (
+                              <Link
+                                key={brand}
+                                href={`/shop?search=${encodeURIComponent(brand)}`}
+                                className="text-sm text-white/60 hover:text-[var(--color-brand-gold)] transition-colors py-1.5"
+                                onClick={() => {
+                                  setSearchOpen(false);
+                                  setMobileOpen(false);
+                                }}
+                              >
+                                {brand}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-sm tracking-wider uppercase text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-2"
+                    onClick={() => {
+                      setSearchOpen(false);
+                      setMobileOpen(false);
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="flex gap-5 pt-4 border-t border-white/10">
                 <button
                   aria-label="Search"

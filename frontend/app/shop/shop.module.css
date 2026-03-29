@@ -11,7 +11,7 @@
     background: linear-gradient(135deg, #0B0B0B 0%, #1a1a1a 100%);
     font-family: 'Playfair Display', 'Cinzel', serif;
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .pageContainer::before {

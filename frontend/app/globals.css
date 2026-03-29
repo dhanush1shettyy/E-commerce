@@ -20,6 +20,12 @@
     font-family: var(--font-inter);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  html {
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -50,19 +56,19 @@
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
+html::-webkit-scrollbar {
   width: 6px;
 }
 
-::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track {
   background: #0f0f0f;
 }
 
-::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
   background: #C8A96A;
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
   background: #E5C98B;
 }

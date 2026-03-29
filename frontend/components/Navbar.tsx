@@ -192,6 +192,12 @@ export default function Navbar() {
                       <span className="absolute -top-1 left-6 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)] z-[-1]" />
                       
                       <div className="flex flex-col max-h-[50vh] overflow-y-auto">
+                        <Link
+                          href="/shop"
+                          className="block px-5 py-2.5 text-sm font-[var(--font-playfair)] text-[var(--color-brand-gold)] font-medium hover:text-white transition-colors hover:bg-white/5 border-b border-white/10"
+                        >
+                          Shop All
+                        </Link>
                         {perfumeBrands.map((brand) => (
                           <Link
                             key={brand}
@@ -402,6 +408,16 @@ export default function Navbar() {
                             exit={{ opacity: 0, height: 0 }}
                             className="overflow-hidden pl-4 border-l border-white/10 ml-2 mt-1 flex flex-col gap-2"
                           >
+                            <Link
+                              href="/shop"
+                              className="text-sm font-medium text-[var(--color-brand-gold)] hover:text-white transition-colors py-1.5 border-b border-white/10 pb-2 mb-1"
+                              onClick={() => {
+                                setSearchOpen(false);
+                                setMobileOpen(false);
+                              }}
+                            >
+                              Shop All
+                            </Link>
                             {perfumeBrands.map((brand) => (
                               <Link
                                 key={brand}

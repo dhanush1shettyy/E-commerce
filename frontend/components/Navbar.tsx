@@ -26,6 +26,8 @@ const perfumeBrands = [
   "Bond No. 9"
 ];
 
+const popularBrands = ["Gucci", "Prada"];
+
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
@@ -43,7 +45,13 @@ export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authUserName, setAuthUserName] = useState<string | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [desktopShopOpen, setDesktopShopOpen] = useState(false);
+  const [desktopBrandsOpen, setDesktopBrandsOpen] = useState(false);
+  const [desktopPopularityOpen, setDesktopPopularityOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
+  const [mobileBrandsOpen, setMobileBrandsOpen] = useState(false);
+  const [mobilePopularityOpen, setMobilePopularityOpen] = useState(false);
+  const desktopShopRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -82,9 +90,16 @@ export default function Navbar() {
       const target = event.target as Node;
       const clickedDesktopMenu = userMenuRef.current?.contains(target);
       const clickedMobileMenu = mobileUserMenuRef.current?.contains(target);
+      const clickedShopMenu = desktopShopRef.current?.contains(target);
 
       if (!clickedDesktopMenu && !clickedMobileMenu) {
         setUserMenuOpen(false);
+      }
+
+      if (!clickedShopMenu) {
+        setDesktopShopOpen(false);
+        setDesktopBrandsOpen(false);
+        setDesktopPopularityOpen(false);
       }
     };
 
@@ -92,6 +107,9 @@ export default function Navbar() {
       if (event.key === "Escape") {
         setUserMenuOpen(false);
         setSearchOpen(false);
+        setDesktopShopOpen(false);
+        setDesktopBrandsOpen(false);
+        setDesktopPopularityOpen(false);
       }
     };
 
@@ -177,39 +195,125 @@ export default function Navbar() {
           {navLinks.map((link) => {
             if (link.label === "Shop") {
               return (
-                <div key={link.label} className="relative group/shop py-2">
-                  <Link
-                    href={link.href}
+                <div key={link.label} className="relative py-2" ref={desktopShopRef}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDesktopShopOpen((open) => {
+                        const nextOpen = !open;
+                        if (!nextOpen) {
+                          setDesktopBrandsOpen(false);
+                          setDesktopPopularityOpen(false);
+                        }
+                        return nextOpen;
+                      });
+                    }}
                     className="relative text-sm tracking-wider uppercase text-white/70 hover:text-white transition-colors duration-300 group flex items-center gap-1"
                   >
                     {link.label}
-                    <ChevronDown size={14} className="opacity-70 transition-transform group-hover/shop:-rotate-180" />
-                    <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[var(--color-brand-gold)] transition-all duration-300 group-hover:w-full" />
-                  </Link>
+                    <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${desktopShopOpen ? "-rotate-180" : ""}`} />
+                    <span className={`absolute -bottom-1 left-0 h-[1px] bg-[var(--color-brand-gold)] transition-all duration-300 ${desktopShopOpen ? "w-full" : "w-0 group-hover:w-full"}`} />
+                  </button>
 
-                  <div className="absolute left-0 top-full pt-4 opacity-0 invisible group-hover/shop:opacity-100 group-hover/shop:visible transition-all duration-300 z-50">
-                    <div className="w-64 rounded-xl border border-white/10 bg-[var(--color-brand-dark)] py-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
-                      <span className="absolute -top-1 left-6 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)] z-[-1]" />
-                      
-                      <div className="flex flex-col max-h-[50vh] overflow-y-auto">
-                        <Link
-                          href="/shop"
-                          className="block px-5 py-2.5 text-sm font-[var(--font-playfair)] text-[var(--color-brand-gold)] font-medium hover:text-white transition-colors hover:bg-white/5 border-b border-white/10"
-                        >
-                          Shop All
-                        </Link>
-                        {perfumeBrands.map((brand) => (
-                          <Link
-                            key={brand}
-                            href={`/shop?search=${encodeURIComponent(brand)}`}
-                            className="block px-5 py-2.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5"
-                          >
-                            {brand}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  <AnimatePresence>
+                    {desktopShopOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute left-0 top-full pt-4 z-50"
+                      >
+                        <div className="w-64 rounded-xl border border-white/10 bg-[var(--color-brand-dark)] py-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
+                          <span className="absolute -top-1 left-6 h-3 w-3 rotate-45 border-l border-t border-white/10 bg-[var(--color-brand-dark)] z-[-1]" />
+
+                          <div className="flex flex-col">
+                            <Link
+                              href="/shop"
+                              onClick={() => {
+                                setDesktopShopOpen(false);
+                                setDesktopBrandsOpen(false);
+                                setDesktopPopularityOpen(false);
+                              }}
+                              className="block px-5 py-2.5 text-sm font-[var(--font-playfair)] text-[var(--color-brand-gold)] font-medium hover:text-white transition-colors hover:bg-white/5 border-b border-white/10"
+                            >
+                              Shop All
+                            </Link>
+                            <div className="flex flex-col border-b border-white/10">
+                              <button
+                                type="button"
+                                onClick={() => setDesktopBrandsOpen((open) => !open)}
+                                className="w-full px-5 py-2.5 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                              >
+                                Shop All Brands
+                                <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${desktopBrandsOpen ? "rotate-180" : ""}`} />
+                              </button>
+                              <AnimatePresence>
+                                {desktopBrandsOpen && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="overflow-hidden pl-4 pb-2"
+                                  >
+                                    {perfumeBrands.map((brand) => (
+                                      <Link
+                                        key={brand}
+                                        href={`/shop?search=${encodeURIComponent(brand)}`}
+                                        onClick={() => {
+                                          setDesktopShopOpen(false);
+                                          setDesktopBrandsOpen(false);
+                                          setDesktopPopularityOpen(false);
+                                        }}
+                                        className="block px-2 py-1.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors"
+                                      >
+                                        {brand}
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            <div className="flex flex-col">
+                              <button
+                                type="button"
+                                onClick={() => setDesktopPopularityOpen((open) => !open)}
+                                className="w-full px-5 py-2.5 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                              >
+                                Shop By Popularity
+                                <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${desktopPopularityOpen ? "rotate-180" : ""}`} />
+                              </button>
+                              <AnimatePresence>
+                                {desktopPopularityOpen && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="overflow-hidden pl-4 pb-2"
+                                  >
+                                    {popularBrands.map((brand) => (
+                                      <Link
+                                        key={brand}
+                                        href={`/shop?search=${encodeURIComponent(brand)}`}
+                                        onClick={() => {
+                                          setDesktopShopOpen(false);
+                                          setDesktopBrandsOpen(false);
+                                          setDesktopPopularityOpen(false);
+                                        }}
+                                        className="block px-2 py-1.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors"
+                                      >
+                                        {brand}
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             }
@@ -393,7 +497,13 @@ export default function Navbar() {
                           {link.label}
                         </Link>
                         <button 
-                          onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+                          onClick={() => {
+                            setShopDropdownOpen(!shopDropdownOpen);
+                            if (shopDropdownOpen) {
+                              setMobileBrandsOpen(false);
+                              setMobilePopularityOpen(false);
+                            }
+                          }}
                           className="text-white/50 hover:text-[var(--color-brand-gold)] p-2 active:scale-95 transition-transform"
                         >
                           <ChevronDown size={18} className={`transition-transform duration-300 ${shopDropdownOpen ? 'rotate-180' : ''}`} />
@@ -414,23 +524,87 @@ export default function Navbar() {
                               onClick={() => {
                                 setSearchOpen(false);
                                 setMobileOpen(false);
+                                setShopDropdownOpen(false);
+                                setMobileBrandsOpen(false);
+                                setMobilePopularityOpen(false);
                               }}
                             >
                               Shop All
                             </Link>
-                            {perfumeBrands.map((brand) => (
-                              <Link
-                                key={brand}
-                                href={`/shop?search=${encodeURIComponent(brand)}`}
-                                className="text-sm text-white/60 hover:text-[var(--color-brand-gold)] transition-colors py-1.5"
-                                onClick={() => {
-                                  setSearchOpen(false);
-                                  setMobileOpen(false);
-                                }}
+                            <div className="flex flex-col">
+                              <button
+                                type="button"
+                                onClick={() => setMobileBrandsOpen((open) => !open)}
+                                className="w-full text-left text-sm text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-1.5 flex items-center justify-between"
                               >
-                                {brand}
-                              </Link>
-                            ))}
+                                Shop All Brands
+                                <ChevronDown size={14} className={`transition-transform duration-300 ${mobileBrandsOpen ? 'rotate-180' : ''}`} />
+                              </button>
+                              <AnimatePresence>
+                                {mobileBrandsOpen && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="overflow-hidden pl-3 border-l border-white/10 ml-1 mt-1 flex flex-col"
+                                  >
+                                    {perfumeBrands.map((brand) => (
+                                      <Link
+                                        key={brand}
+                                        href={`/shop?search=${encodeURIComponent(brand)}`}
+                                        className="text-sm text-white/60 hover:text-[var(--color-brand-gold)] transition-colors py-1.5"
+                                        onClick={() => {
+                                          setSearchOpen(false);
+                                          setMobileOpen(false);
+                                          setShopDropdownOpen(false);
+                                          setMobileBrandsOpen(false);
+                                          setMobilePopularityOpen(false);
+                                        }}
+                                      >
+                                        {brand}
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                            <div className="flex flex-col">
+                              <button
+                                type="button"
+                                onClick={() => setMobilePopularityOpen((open) => !open)}
+                                className="w-full text-left text-sm text-white/70 hover:text-[var(--color-brand-gold)] transition-colors py-1.5 flex items-center justify-between"
+                              >
+                                Shop By Popularity
+                                <ChevronDown size={14} className={`transition-transform duration-300 ${mobilePopularityOpen ? 'rotate-180' : ''}`} />
+                              </button>
+                              <AnimatePresence>
+                                {mobilePopularityOpen && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="overflow-hidden pl-3 border-l border-white/10 ml-1 mt-1 flex flex-col"
+                                  >
+                                    {popularBrands.map((brand) => (
+                                      <Link
+                                        key={brand}
+                                        href={`/shop?search=${encodeURIComponent(brand)}`}
+                                        className="text-sm text-white/60 hover:text-[var(--color-brand-gold)] transition-colors py-1.5"
+                                        onClick={() => {
+                                          setSearchOpen(false);
+                                          setMobileOpen(false);
+                                          setShopDropdownOpen(false);
+                                          setMobileBrandsOpen(false);
+                                          setMobilePopularityOpen(false);
+                                        }}
+                                      >
+                                        {brand}
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>

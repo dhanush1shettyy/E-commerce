@@ -1,10 +1,11 @@
 "use client";
+// Version: 1.0.1 - Submenu positioning fix
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
@@ -239,75 +240,91 @@ export default function Navbar() {
                             >
                               Shop All
                             </Link>
-                            <div className="flex flex-col border-b border-white/10">
-                              <button
-                                type="button"
-                                onClick={() => setDesktopBrandsOpen((open) => !open)}
-                                className="w-full px-5 py-2.5 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                            <div className="relative group/brands border-b border-white/10">
+                              <div
+                                onMouseEnter={() => setDesktopBrandsOpen(true)}
+                                onMouseLeave={() => setDesktopBrandsOpen(false)}
+                                className="w-full"
                               >
-                                Shop All Brands
-                                <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${desktopBrandsOpen ? "rotate-180" : ""}`} />
-                              </button>
-                              <AnimatePresence>
-                                {desktopBrandsOpen && (
-                                  <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: "auto" }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="overflow-hidden pl-4 pb-2"
-                                  >
-                                    {perfumeBrands.map((brand) => (
-                                      <Link
-                                        key={brand}
-                                        href={`/shop?search=${encodeURIComponent(brand)}`}
-                                        onClick={() => {
-                                          setDesktopShopOpen(false);
-                                          setDesktopBrandsOpen(false);
-                                          setDesktopPopularityOpen(false);
-                                        }}
-                                        className="block px-2 py-1.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors"
-                                      >
-                                        {brand}
-                                      </Link>
-                                    ))}
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
+                                <button
+                                  type="button"
+                                  onClick={() => setDesktopBrandsOpen(open => !open)}
+                                  className="w-full px-5 py-3 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                                >
+                                  Shop All Brands
+                                  <ChevronRight size={14} className={`opacity-70 transition-transform duration-300 ${desktopBrandsOpen ? "rotate-90" : ""}`} />
+                                </button>
+                                <AnimatePresence>
+                                  {desktopBrandsOpen && (
+                                    <motion.div
+                                      initial={{ opacity: 0, x: 5 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: 5 }}
+                                      className="absolute left-full top-0 w-64 rounded-xl border border-white/10 bg-[var(--color-brand-dark)] py-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)] z-[60]"
+                                    >
+                                      <div className="grid grid-cols-1 gap-1 max-h-[350px] overflow-y-auto custom-scrollbar px-1">
+                                        {perfumeBrands.map((brand) => (
+                                          <Link
+                                            key={brand}
+                                            href={`/shop?search=${encodeURIComponent(brand)}`}
+                                            onClick={() => {
+                                              setDesktopShopOpen(false);
+                                              setDesktopBrandsOpen(false);
+                                              setDesktopPopularityOpen(false);
+                                            }}
+                                            className="block px-4 py-2 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 rounded-lg"
+                                          >
+                                            {brand}
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
                             </div>
-                            <div className="flex flex-col">
-                              <button
-                                type="button"
-                                onClick={() => setDesktopPopularityOpen((open) => !open)}
-                                className="w-full px-5 py-2.5 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                            <div className="relative group/popularity">
+                              <div
+                                onMouseEnter={() => setDesktopPopularityOpen(true)}
+                                onMouseLeave={() => setDesktopPopularityOpen(false)}
+                                className="w-full"
                               >
-                                Shop By Popularity
-                                <ChevronDown size={14} className={`opacity-70 transition-transform duration-300 ${desktopPopularityOpen ? "rotate-180" : ""}`} />
-                              </button>
-                              <AnimatePresence>
-                                {desktopPopularityOpen && (
-                                  <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: "auto" }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="overflow-hidden pl-4 pb-2"
-                                  >
-                                    {popularBrands.map((brand) => (
-                                      <Link
-                                        key={brand}
-                                        href={`/shop?search=${encodeURIComponent(brand)}`}
-                                        onClick={() => {
-                                          setDesktopShopOpen(false);
-                                          setDesktopBrandsOpen(false);
-                                          setDesktopPopularityOpen(false);
-                                        }}
-                                        className="block px-2 py-1.5 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors"
-                                      >
-                                        {brand}
-                                      </Link>
-                                    ))}
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
+                                <button
+                                  type="button"
+                                  onClick={() => setDesktopPopularityOpen(open => !open)}
+                                  className="w-full px-5 py-3 text-left text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 flex items-center justify-between"
+                                >
+                                  Shop By Popularity
+                                  <ChevronRight size={14} className={`opacity-70 transition-transform duration-300 ${desktopPopularityOpen ? "rotate-90" : ""}`} />
+                                </button>
+                                <AnimatePresence>
+                                  {desktopPopularityOpen && (
+                                    <motion.div
+                                      initial={{ opacity: 0, x: 5 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: 5 }}
+                                      className="absolute left-full top-0 w-64 rounded-xl border border-white/10 bg-[var(--color-brand-dark)] py-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)] z-[60]"
+                                    >
+                                      <div className="flex flex-col gap-1 px-1 max-h-[350px] overflow-y-auto custom-scrollbar">
+                                        {popularBrands.map((brand) => (
+                                          <Link
+                                            key={brand}
+                                            href={`/shop?search=${encodeURIComponent(brand)}`}
+                                            onClick={() => {
+                                              setDesktopShopOpen(false);
+                                              setDesktopBrandsOpen(false);
+                                              setDesktopPopularityOpen(false);
+                                            }}
+                                            className="block px-4 py-2 text-sm font-[var(--font-playfair)] text-white/80 hover:text-[var(--color-brand-gold)] transition-colors hover:bg-white/5 rounded-lg"
+                                          >
+                                            {brand}
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -380,6 +397,7 @@ export default function Navbar() {
               aria-label="User account"
               aria-haspopup="menu"
               aria-expanded={userMenuOpen}
+              suppressHydrationWarning
               onClick={() => {
                 syncAuthState();
                 setUserMenuOpen((open) => !open);
@@ -415,6 +433,14 @@ export default function Navbar() {
                     className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                   >
                     Show Cart
+                  </Link>
+                  <Link
+                    href="/favourites"
+                    role="menuitem"
+                    onClick={handleAuthLinkClick}
+                    className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
+                  >
+                    My Favourites
                   </Link>
                   <Link
                     href="/orders"
@@ -681,6 +707,14 @@ export default function Navbar() {
                           className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
                         >
                           Show Cart
+                        </Link>
+                        <Link
+                          href="/favourites"
+                          role="menuitem"
+                          onClick={handleAuthLinkClick}
+                          className="block px-4 py-2.5 text-base font-[var(--font-playfair)] text-[var(--color-brand-gold)]/90 transition-colors hover:bg-white/5 hover:text-white"
+                        >
+                          My Favourites
                         </Link>
                         <Link
                           href="/orders"

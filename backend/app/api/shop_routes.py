@@ -86,3 +86,37 @@ def get_perfume(perfume_id: int, session: Session = Depends(get_session)):
         target_audience=detail_data.get('target_audience', "Unknown"),
         scent=detail_data.get('scent', "Unknown")
     )
+
+@router.get("/featured", response_model=Perfume)
+def get_featured_perfume(session: Session = Depends(get_session)):
+    featured = session.exec(
+        select(Perfume).where(Perfume.brand_name == "Tom Ford", Perfume.model_name == "Noir Extreme")
+    ).first()
+    if not featured:
+        # Fallback to the first one if Tom Ford is not found for some reason
+        featured = session.exec(select(Perfume)).first()
+    return featured
+
+@router.get("/bestsellers", response_model=List[Perfume])
+def get_bestsellers(session: Session = Depends(get_session)):
+    import random
+    all_perfumes = session.exec(select(Perfume)).all()
+    if not all_perfumes:
+        return []
+    
+    # Try to get 4 unique brands
+    brands = list(set(p.brand_name for p in all_perfumes))
+    if len(brands) >= 4:
+        selected_brands = random.sample(brands, 4)
+        selected_perfumes = []
+        for brand in selected_brands:
+            brand_perfumes = [p for p in all_perfumes if p.brand_name == brand]
+            selected_perfumes.append(random.choice(brand_perfumes))
+        return selected_perfumes
+    
+    # Fallback to simple random if not enough unique brands
+    if len(all_perfumes) <= 4:
+        return all_perfumes
+    return random.sample(all_perfumes, 4)
+
+

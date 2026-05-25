@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Star, ShoppingBag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchFeaturedProduct, type Product } from "@/lib/api";
 import { resolveProductImage } from "@/lib/productImages";
+import { addToCart } from "@/lib/cartStorage";
+import { useState } from "react";
 
 function SkeletonLoader() {
   return (
@@ -55,6 +58,7 @@ function RatingStars({ rating }: { rating: number }) {
 }
 
 export default function FeaturedProduct() {
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const { data: product, isLoading, isError } = useQuery<Product>({
     queryKey: ["featuredProduct"],
     queryFn: fetchFeaturedProduct,
@@ -62,6 +66,21 @@ export default function FeaturedProduct() {
 
   if (isLoading) return <SkeletonLoader />;
   if (isError || !product) return <ErrorState />;
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      brand_name: product.brand_name,
+      model_name: product.model_name,
+      description: product.description,
+      price: product.price,
+      image_url: product.image_url,
+      gender: product.gender,
+    });
+    setActionMessage("Added to cart!");
+    setTimeout(() => setActionMessage(null), 3000);
+  };
+
 
   return (
     <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto" aria-label="Featured product">
@@ -88,16 +107,18 @@ export default function FeaturedProduct() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative aspect-square bg-gradient-to-br from-[var(--color-brand-dark)] to-black rounded-lg overflow-hidden group"
+          className="relative aspect-square bg-gradient-to-br from-[var(--color-brand-dark)] to-black rounded-lg overflow-hidden group cursor-pointer"
         >
-          <Image
-            src={resolveProductImage({ name: product.name, image: product.image })}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          <Link href={`/shop/${product.id}`}>
+            <Image
+              src={resolveProductImage({ name: product.name, image: product.image })}
+              alt={product.name}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </Link>
         </motion.div>
 
         {/* Product Details */}
@@ -113,23 +134,35 @@ export default function FeaturedProduct() {
               {product.category}
             </span>
           )}
-          <h3 className="font-[var(--font-playfair)] text-3xl md:text-4xl font-bold">
-            {product.name}
-          </h3>
+          <Link href={`/shop/${product.id}`}>
+            <h3 className="font-[var(--font-playfair)] text-3xl md:text-4xl font-bold hover:text-[var(--color-brand-gold)] transition-colors">
+              {product.name}
+            </h3>
+          </Link>
           <p className="text-white/60 leading-relaxed text-lg">
             {product.description}
           </p>
-          <p className="text-3xl font-light gold-text">${product.price.toFixed(2)}</p>
+          <p className="text-3xl font-light gold-text">
+            ₹{product.price.toLocaleString("en-IN")}
+          </p>
           <RatingStars rating={product.rating} />
           <button
+            onClick={handleAddToCart}
             className="flex items-center gap-3 gold-gradient text-black font-semibold text-sm tracking-wider uppercase px-8 py-4 hover:opacity-90 transition-opacity duration-300 mt-4"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingBag size={18} />
             Add to Cart
           </button>
+          {actionMessage && (
+            <p className="text-sm text-[var(--color-brand-gold)] mt-3 animate-pulse">
+              {actionMessage}
+            </p>
+          )}
         </motion.div>
+
       </div>
+
     </section>
   );
 }
